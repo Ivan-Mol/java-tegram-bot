@@ -1,4 +1,4 @@
-package ru.ivan_mol.controller;
+package org.ivan_mol.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -10,7 +10,6 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import javax.annotation.PostConstruct;
 //Урок 2. 8:10
 @Component
 @Log4j
@@ -34,9 +33,7 @@ public class TelegramBot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-        log.debug(update.getMessage());
-        SendMessage message = new SendMessage(update.getMessage().getChatId().toString(), "Hello!");
-        sendAnswerToBot(message);
+        updateController.processUpdate(update);
     }
 
     @SneakyThrows(TelegramApiException.class)

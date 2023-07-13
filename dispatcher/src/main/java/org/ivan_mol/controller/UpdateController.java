@@ -1,12 +1,14 @@
-package ru.ivan_mol.controller;
+package org.ivan_mol.controller;
 
 import lombok.extern.log4j.Log4j;
+import org.ivan_mol.service.UpdateProducer;
+import org.ivan_mol.utils.MessageUtils;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import ru.ivan_mol.utils.MessageUtils;
+import static org.ivan_mol.model.RabbitQueue.*;
 
 @Component
 @Log4j
@@ -14,10 +16,13 @@ import ru.ivan_mol.utils.MessageUtils;
 public class UpdateController {
     private final TelegramBot telegramBot;
     private final MessageUtils messageUtils;
+    private final UpdateProducer updateProducer;
 
-    public UpdateController(@Lazy TelegramBot telegramBot, MessageUtils messageUtils) {
+
+    public UpdateController(@Lazy TelegramBot telegramBot, MessageUtils messageUtils,UpdateProducer updateProducer) {
         this.telegramBot = telegramBot;
         this.messageUtils = messageUtils;
+        this.updateProducer = updateProducer;
     }
 
     public void processUpdate(Update update) {
@@ -47,15 +52,23 @@ public class UpdateController {
         }
     }
 
-    private void processTextMessage(Update update) {
-
-    }
-
     private void processPhotoMessage(Update update) {
-
+        updateProducer.produce(PHOTO_MESSAGE_UPDATE, update);
+        setFileIsReceivedView(update);
     }
 
     private void processDocumentMessage(Update update) {
+        updateProducer.produce(DOC_MESSAGE_UPDATE, update);
+        setFileIsReceivedView(update);
+    }
+    private void setFileIsReceivedView(Update update) {
+        var sendMessage = messageUtils.generateSendMessageWithText(update,
+                "File processing...");
+        setView(sendMessage);
+    }
+
+    private void processTextMessage(Update update) {
+        updateProducer.produce(TEXT_MESSAGE_UPDATE, update);
     }
 
     private void setUnsupportedMessageTypeView(Update update) {
@@ -64,7 +77,7 @@ public class UpdateController {
         setView(sendMessage);
     }
 
-    private void setView(SendMessage sendMessage) {
+    public void setView(SendMessage sendMessage) {
         telegramBot.sendAnswerToBot(sendMessage);
     }
 }

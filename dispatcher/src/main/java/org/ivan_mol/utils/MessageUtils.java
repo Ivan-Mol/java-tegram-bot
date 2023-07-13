@@ -1,4 +1,4 @@
-package ru.ivan_mol.utils;
+package org.ivan_mol.utils;
 
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
