@@ -1,3 +1,4 @@
 # Project exclude paths
 /dispatcher/target/
 /dispatcher/src/main/resources/application.properties
+/logs/dispatcher.log

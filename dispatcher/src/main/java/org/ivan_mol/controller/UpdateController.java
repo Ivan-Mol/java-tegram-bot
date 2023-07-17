@@ -61,14 +61,14 @@ public class UpdateController {
         updateProducer.produce(DOC_MESSAGE_UPDATE, update);
         setFileIsReceivedView(update);
     }
+    private void processTextMessage(Update update) {
+        updateProducer.produce(TEXT_MESSAGE_UPDATE, update);
+    }
+
     private void setFileIsReceivedView(Update update) {
         var sendMessage = messageUtils.generateSendMessageWithText(update,
                 "File processing...");
         setView(sendMessage);
-    }
-
-    private void processTextMessage(Update update) {
-        updateProducer.produce(TEXT_MESSAGE_UPDATE, update);
     }
 
     private void setUnsupportedMessageTypeView(Update update) {

@@ -9,6 +9,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="dispatcher" />
         <module name="common-rabbitmq" />
+        <module name="node" />
       </profile>
     </annotationProcessing>
   </component>
@@ -16,6 +17,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="common-rabbitmq" options="-parameters" />
       <module name="dispatcher" options="-parameters" />
+      <module name="node" options="-parameters" />
       <module name="telegramBot" options="" />
     </option>
   </component>
