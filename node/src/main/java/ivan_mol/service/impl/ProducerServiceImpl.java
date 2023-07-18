@@ -1,5 +1,6 @@
-package ivan_mol.service;
+package ivan_mol.service.impl;
 
+import ivan_mol.service.ProducerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;

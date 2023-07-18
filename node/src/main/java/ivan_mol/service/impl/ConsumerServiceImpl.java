@@ -1,5 +1,8 @@
-package ivan_mol.service;
+package ivan_mol.service.impl;
 
+import ivan_mol.service.ConsumerService;
+import ivan_mol.service.MainService;
+import ivan_mol.service.ProducerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -12,17 +15,14 @@ import static org.ivan_mol.model.RabbitQueue.*;
 @Service
 @Log4j
 @RequiredArgsConstructor
-public class ConsumerServiceImpl implements ConsumerService{
+public class ConsumerServiceImpl implements ConsumerService {
     private final ProducerService producerService;
+    private final MainService mainService;
     @Override
     @RabbitListener(queues = TEXT_MESSAGE_UPDATE)
     public void consumeTextMessageUpdates(Update update) {
         log.debug("consumeTextMessageUpdates");
-        Message message = update.getMessage();
-        SendMessage sendMessage = new SendMessage();
-        sendMessage.setChatId(message.getChatId().toString());
-        sendMessage.setText("Hello from node");
-        producerService.producerAnswer(sendMessage);
+        mainService.processTextMessage(update);
     }
 
     @Override

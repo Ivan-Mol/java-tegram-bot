@@ -2,3 +2,4 @@
 /dispatcher/target/
 /dispatcher/src/main/resources/application.properties
 /logs/dispatcher.log
+/logs/node.log
