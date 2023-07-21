@@ -1,4 +1,4 @@
-package ivan_mol;
+package org.ivan_mol;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -49,5 +49,10 @@
             <artifactId>hibernate-types-52</artifactId>
             <version>2.21.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.ivan_mol</groupId>
+            <artifactId>common-jpa</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

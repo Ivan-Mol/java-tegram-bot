@@ -1,4 +1,4 @@
-package ivan_mol.configuration;
+package org.ivan_mol.configuration;
 
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;

@@ -1,4 +1,4 @@
-package ivan_mol.entity;
+package org.ivan_mol.entity;
 
 import com.vladmihalcea.hibernate.type.json.JsonBinaryType;
 import lombok.AllArgsConstructor;

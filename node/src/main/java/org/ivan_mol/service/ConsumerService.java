@@ -1,4 +1,4 @@
-package ivan_mol.service;
+package org.ivan_mol.service;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
 
