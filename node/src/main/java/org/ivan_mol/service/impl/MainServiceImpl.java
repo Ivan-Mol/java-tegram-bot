@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.ivan_mol.dao.AppUserDao;
 import org.ivan_mol.dao.RawDataDao;
 import org.ivan_mol.entity.AppDocument;
+import org.ivan_mol.entity.AppPhoto;
 import org.ivan_mol.entity.AppUser;
 import org.ivan_mol.entity.RawData;
 import org.ivan_mol.entity.UserState;
@@ -86,9 +87,17 @@ public class MainServiceImpl implements MainService {
             return;
         }
 
-        //TODO добавить сохранения фото :)
-        var answer = "Photo is loaded successful";
-        sendAnswer(answer, chatId);
+        try {
+            AppPhoto photo = fileService.processPhoto(update.getMessage());
+            //TODO добавить генерацию ссылки для скачивания фото
+            var answer = "Photo is uploaded! "
+                    + "Link: http://test.com/blabla";
+            sendAnswer(answer, chatId);
+        } catch (UploadFileException e) {
+            log.error(e.getMessage());
+            String error = "Photo is not loaded.";
+            sendAnswer(error, chatId);
+        }
     }
 
     private void saveRawData(Update update) {
@@ -125,39 +134,41 @@ public class MainServiceImpl implements MainService {
                 + "/registration - User registration.";
     }
 
-        private String cancelProcess (AppUser appUser){
-            appUser.setState(BASIC_STATE);
-            appUserDao.save(appUser);
-            return "Command is canceled!";
-        }
-        private boolean isNotAllowToSendContent (Long chatId, AppUser appUser){
-            var userState = appUser.getState();
-            if (!appUser.getIsActive()) {
-                var error = "Register or activate your account";
-                sendAnswer(error, chatId);
-                return true;
-            } else if (!BASIC_STATE.equals(userState)) {
-                var error = "Cancel the current command /cancel";
-                sendAnswer(error, chatId);
-                return true;
-            }
-            return false;
-        }
-        private AppUser findOrSaveAppUser (Update update){
-            User telegramUser = update.getMessage().getFrom();
-            AppUser appUser = appUserDao.findAppUserByTelegramUserId(telegramUser.getId());
-            if (appUser == null) {
-                appUser = new AppUser();
-                appUser.setTelegramUserId(telegramUser.getId());
-                appUser.setUserName(telegramUser.getUserName());
-                appUser.setFirstName(telegramUser.getFirstName());
-                appUser.setLastName(telegramUser.getLastName());
-                //TODO
-                appUser.setIsActive(true);
-                appUser.setState(BASIC_STATE);
-                return appUserDao.save(appUser);
-            }
-            return appUser;
-        }
-
+    private String cancelProcess(AppUser appUser) {
+        appUser.setState(BASIC_STATE);
+        appUserDao.save(appUser);
+        return "Command is canceled!";
     }
+
+    private boolean isNotAllowToSendContent(Long chatId, AppUser appUser) {
+        var userState = appUser.getState();
+        if (!appUser.getIsActive()) {
+            var error = "Register or activate your account";
+            sendAnswer(error, chatId);
+            return true;
+        } else if (!BASIC_STATE.equals(userState)) {
+            var error = "Cancel the current command /cancel";
+            sendAnswer(error, chatId);
+            return true;
+        }
+        return false;
+    }
+
+    private AppUser findOrSaveAppUser(Update update) {
+        User telegramUser = update.getMessage().getFrom();
+        AppUser appUser = appUserDao.findAppUserByTelegramUserId(telegramUser.getId());
+        if (appUser == null) {
+            appUser = new AppUser();
+            appUser.setTelegramUserId(telegramUser.getId());
+            appUser.setUserName(telegramUser.getUserName());
+            appUser.setFirstName(telegramUser.getFirstName());
+            appUser.setLastName(telegramUser.getLastName());
+            //TODO
+            appUser.setIsActive(true);
+            appUser.setState(BASIC_STATE);
+            return appUserDao.save(appUser);
+        }
+        return appUser;
+    }
+
+}
