@@ -13,6 +13,7 @@ import org.ivan_mol.exception.UploadFileException;
 import org.ivan_mol.service.FileService;
 import org.ivan_mol.service.MainService;
 import org.ivan_mol.service.ProducerService;
+import org.ivan_mol.service.enums.LinkType;
 import org.ivan_mol.service.enums.ServiceCommand;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -68,9 +69,9 @@ public class MainServiceImpl implements MainService {
         }
         try {
             AppDocument doc = fileService.processDoc(update.getMessage());
-            //TODO Добавить генерацию ссылки для скачивания документа
-            var answer = "Document is loaded successful! "
-                    + "Link for download: http://test.com/blabla";
+            String link = fileService.generateLink(doc.getId(), LinkType.GET_DOC);
+            String answer = "Документ успешно загружен! "
+                    + "Ссылка для скачивания: " + link;
             sendAnswer(answer, chatId);
         } catch (UploadFileException ex) {
             String error = "File is not loaded.";
@@ -81,17 +82,17 @@ public class MainServiceImpl implements MainService {
     @Override
     public void processPhotoMessage(Update update) {
         saveRawData(update);
-        var appUser = findOrSaveAppUser(update);
-        var chatId = update.getMessage().getChatId();
+        AppUser appUser = findOrSaveAppUser(update);
+        Long chatId = update.getMessage().getChatId();
         if (isNotAllowToSendContent(chatId, appUser)) {
             return;
         }
 
         try {
             AppPhoto photo = fileService.processPhoto(update.getMessage());
-            //TODO добавить генерацию ссылки для скачивания фото
-            var answer = "Photo is uploaded! "
-                    + "Link: http://test.com/blabla";
+            String link = fileService.generateLink(photo.getId(), LinkType.GET_PHOTO);
+            String answer = "Фото успешно загружено! "
+                    + "Ссылка для скачивания: " + link;
             sendAnswer(answer, chatId);
         } catch (UploadFileException e) {
             log.error(e.getMessage());

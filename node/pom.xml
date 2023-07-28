@@ -59,5 +59,10 @@
             <artifactId>json</artifactId>
             <version>20220924</version>
         </dependency>
+        <dependency>
+            <groupId>org.ivan_mol</groupId>
+            <artifactId>common-utils</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>
