@@ -12,19 +12,19 @@ import static org.ivan_mol.model.RabbitQueue.*;
 
 @Component
 @Log4j
-
-public class UpdateController {
-    private final TelegramBot telegramBot;
+public class UpdateProcessor {
+    private TelegramBot telegramBot;
     private final MessageUtils messageUtils;
     private final UpdateProducer updateProducer;
 
-
-    public UpdateController(@Lazy TelegramBot telegramBot, MessageUtils messageUtils,UpdateProducer updateProducer) {
-        this.telegramBot = telegramBot;
+    public UpdateProcessor(MessageUtils messageUtils, UpdateProducer updateProducer) {
         this.messageUtils = messageUtils;
         this.updateProducer = updateProducer;
     }
 
+    public void registerBot(TelegramBot telegramBot) {
+        this.telegramBot = telegramBot;
+    }
     public void processUpdate(Update update) {
         if (update == null) {
             log.error("Update is null");
@@ -78,6 +78,6 @@ public class UpdateController {
     }
 
     public void setView(SendMessage sendMessage) {
-        telegramBot.sendAnswerToBot(sendMessage);
+        telegramBot.sendAnswerMessage(sendMessage);
     }
 }

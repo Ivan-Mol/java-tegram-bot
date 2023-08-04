@@ -10,34 +10,70 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-//Урок 2. 8:10
+import lombok.extern.log4j.Log4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.bots.TelegramWebhookBot;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+
+import javax.annotation.PostConstruct;
+
 @Component
 @Log4j
 @RequiredArgsConstructor
-public class TelegramBot extends TelegramLongPollingBot {
+public class TelegramBot extends TelegramWebhookBot {
     @Value("${bot.name}")
-    private String BOT_NAME;
+    private String botName;
     @Value("${bot.token}")
-    private String TOKEN;
-    private final UpdateController updateController;
+    private String botToken;
+    @Value("${bot.uri}")
+    private String botUri;
+    private final UpdateProcessor updateProcessor;
+
+    @PostConstruct
+    public void init() {
+        updateProcessor.registerBot(this);
+        try {
+            var setWebhook = SetWebhook.builder()
+                    .url(botUri)
+                    .build();
+            this.setWebhook(setWebhook);
+        } catch (TelegramApiException e) {
+            log.error(e);
+        }
+    }
 
     @Override
     public String getBotUsername() {
-        return BOT_NAME;
+        return botName;
     }
 
     @Override
     public String getBotToken() {
-        return TOKEN;
+        return botToken;
     }
 
     @Override
-    public void onUpdateReceived(Update update) {
-        updateController.processUpdate(update);
+    public String getBotPath() {
+        return "/update";
     }
 
-    @SneakyThrows(TelegramApiException.class)
-    public void sendAnswerToBot(SendMessage message) {
-        execute(message);
+    public void sendAnswerMessage(SendMessage message) {
+        if (message != null) {
+            try {
+                execute(message);
+            } catch (TelegramApiException e) {
+                log.error(e);
+            }
+        }
+    }
+
+    @Override
+    public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
+        return null;
     }
 }
