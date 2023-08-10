@@ -1,8 +1,14 @@
-# java-tegram-bot
+# java-telegram-bot
 
 Telegram bot that works as a file storage.
 
-
+Stack:
+- SpringBoot
+- Postgres
+- Rabbitmq
+- Docker
+- Hashids
+- Telegram Api
 
 ## App scheme:
 
